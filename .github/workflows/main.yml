@@ -30,6 +30,7 @@ jobs:
           
       - name: Add KernelSU as Submodule
         run: |
+          cd /home/runner/work/kernel_xiaomi_raphael/kernel_xiaomi_raphael
           git submodule add https://github.com/SoDebug/KernelSU.git KernelSU |
           git submodule init |
           git submodule update
@@ -54,6 +55,7 @@ jobs:
           make LLVM=1 LLVM_IAS=1 CC="ccache clang" raphael_defconfig
           make LLVM=1 LLVM_IAS=1 CC="ccache clang" -j$(grep -c ^processor /proc/cpuinfo)
           popd
+          
       - name: Creating Config Info
         run: |
           echo "Device: RedMi K20 Pro 
@@ -71,6 +73,7 @@ jobs:
           pushd AnyKernel3
           7z a -mx9 ../Raphael-Kernel_KSU_Manully_SA13.zip *
           popd
+          
       - name: Uploading Kernel Package to GH-Release
         uses: ncipollo/release-action@v1.8.6
         with:
