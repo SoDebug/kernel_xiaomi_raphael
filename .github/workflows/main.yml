@@ -1,0 +1,81 @@
+name: Build Kernel(SA13_tree_ksu_manully_intergrate)
+
+on:
+  push:
+    branches:
+    - "13.0"
+
+jobs:
+  KSUForRaphael:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Installing Dependencies
+        run: |
+          sudo apt update -y
+          sudo apt-get install -y zip flex bison libncurses-dev gawk  libiberty-dev autoconf kmod bc build-essential gcc libc6 curl libstdc++6 git wget libssl-dev cpio p7zip-full ccache
+          sudo apt clean
+          
+      - name: Cloning Sources and Toolchain
+        run: |
+          git clone https://github.com/SOVIET-ANDROID/kernel_xiaomi_raphael.git --depth=1 -b dev/KSU
+          git clone https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r445002 --depth=1 --single-branch --no-tags -b 12.0 ~/clang
+          git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/aarch64-linux-android-4.9
+          git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/arm-linux-androideabi-4.9
+          git clone https://github.com/SoDebug/AnyKernel3.git
+          
+          
+      - name: Remove Old KernelSU Files
+        run: |
+          cd kernel_xiaomi_raphael && rm -rf drivers/kernelsu && rm -rf .git/module/*
+          
+      - name: Add KernelSU as Submodule
+        run: |
+          git submodule add https://github.com/SoDebug/KernelSU.git KernelSU |
+          git submodule init |
+          git submodule update
+          
+      - name: Integrate KernelSU 
+        run: 
+          curl -LSs "https://raw.githubusercontent.com/SoDebug/KernelSU/main/kernel/setup.sh" | bash -s v0.5.5
+          
+      - name: Compiling Kernel
+        run: |
+          CLANG=~/clang/bin
+          GCC32=~/arm-linux-androideabi-4.9/bin
+          GCC64=~/aarch64-linux-android-4.9/bin
+          PATH=$CLANG:$GCC64:$GCC32:$PATH
+          export PATH
+          export ARCH=arm64
+          export CLANG_TRIPLE=aarch64-linux-gnu
+          export CROSS_COMPILE=aarch64-linux-android-
+          export CROSS_COMPILE_ARM32=arm-linux-androideabi-
+          output_dir=out
+          pushd kernel_xiaomi_raphael
+          make LLVM=1 LLVM_IAS=1 CC="ccache clang" raphael_defconfig
+          make LLVM=1 LLVM_IAS=1 CC="ccache clang" -j$(grep -c ^processor /proc/cpuinfo)
+          popd
+      - name: Creating Config Info
+        run: |
+          echo "Device: RedMi K20 Pro 
+          Source Code Tree: SOVIET-ANDROID branch:13.0
+          Code: raphael
+          Contain KernelSU: YES(Manully_Intergrate)
+          Build Code: $(date +%Y%m%d)_${{ github.run_number }}
+          For SOVIET-ANDROID Kernel 13.0
+          " >> INFO.txt
+          
+      - name: Packaging the Kernel
+        run: |
+          cp -v kernel_xiaomi_raphael/out/arch/arm64/boot/Image.gz \
+                     AnyKernel3/
+          pushd AnyKernel3
+          7z a -mx9 ../Raphael-Kernel_KSU_Manully_SA13.zip *
+          popd
+      - name: Uploading Kernel Package to GH-Release
+        uses: ncipollo/release-action@v1.8.6
+        with:
+          artifacts: Raphael-Kernel_KSU_Manully_SA13.zip
+          name: " Raphael-Kernel_KSU_Manully_SA13"
+          tag: " ${{ github.run_number }}_Raphael-Kernel_KSU_Manully_SA13"
+          bodyFile: "INFO.txt"
+          token: ${{ secrets.GITHUB_TOKEN }}
