@@ -64,7 +64,7 @@ jobs:
 
         run: |
 
-          cd ${{ env.CheckOut_DIR }} && rm -rf drivers/ && rm -rf .git/module/*
+          cd ${{ env.CheckOut_DIR }} && rm -rf drivers/staging/kernelsu && rm -rf .git/module/*
 
           
 
