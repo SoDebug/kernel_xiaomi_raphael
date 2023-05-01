@@ -4,6 +4,9 @@ on:
   push:
     branches:
     - "13.0"
+    
+env: 
+  CheckOut_DIR: /home/runner/work/kernel_xiaomi_raphael/kernel_xiaomi_raphael    
 
 jobs:
   KSUForRaphael:
@@ -17,19 +20,23 @@ jobs:
           
       - name: Cloning Sources and Toolchain
         run: |
-          git clone https://github.com/SOVIET-ANDROID/kernel_xiaomi_raphael.git -b 13.0
           git clone https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r445002 --depth=1 --single-branch --no-tags -b 12.0 ~/clang
           git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/aarch64-linux-android-4.9
           git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/arm-linux-androideabi-4.9
           git clone https://github.com/SoDebug/AnyKernel3.git
           
-          
+      - name: CheckOut Kernel Tree
+        uses: actions/checkout@v3.5.2
+        with: 
+          ref: "13.0"
+        
       - name: Remove Old KernelSU Files
         run: |
-          rm -rf drivers/kernelsu && rm -rf .git/module/*
+          cd ${{ Checkout_DIR }} && rm -rf drivers/kernelsu && rm -rf .git/module/*
           
       - name: Add KernelSU as Submodule
         run: |
+          cd cd ${{ Checkout_DIR }}
           git submodule add https://github.com/SoDebug/KernelSU.git KernelSU |
           git submodule init |
           git submodule update
