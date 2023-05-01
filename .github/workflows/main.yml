@@ -24,7 +24,7 @@ jobs:
           git clone https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r445002 --depth=1 --single-branch --no-tags -b 12.0 ~/clang
           git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/aarch64-linux-android-4.9
           git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/arm-linux-androideabi-4.9
-          git clone https://github.com/SoDebug/AnyKernel3.git ${{ env.AnyKernel }}
+          git clone https://github.com/onettboots/boolx_anykernel.git ${{ env.AnyKernel }}
           
       - name: CheckOut Kernel Tree
         uses: actions/checkout@v3.5.2
@@ -74,7 +74,8 @@ jobs:
           
       - name: Packaging the Kernel
         run: |
-          cp -v ${{ env.CheckOut_DIR }}/out/arch/arm64/boot/Image.gz ${{ env.AnyKernel }} &&
+          cp -v ${{ env.CheckOut_DIR }}/out/arch/arm64/boot/Image.gz-dtb ${{ env.AnyKernel }} &&
+          cp -v ${{ env.CheckOut_DIR }}/out/arch/arm64/boot/dtbo.img ${{ env.AnyKernel }}/o &&
           cd ${{ env.AnyKernel }} &&
           7z a -mx9 Raphael-Kernel_KSU_Manully_SA13.zip *
   
