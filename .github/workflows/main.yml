@@ -36,7 +36,7 @@ jobs:
           
       - name: Add KernelSU as Submodule
         run: |
-          cd cd ${{ env.CheckOut_DIR }}
+          cd ${{ env.CheckOut_DIR }} &&
           git submodule add https://github.com/SoDebug/KernelSU.git KernelSU |
           git submodule init |
           git submodule update
