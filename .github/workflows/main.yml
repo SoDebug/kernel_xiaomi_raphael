@@ -32,11 +32,11 @@ jobs:
         
       - name: Remove Old KernelSU Files
         run: |
-          cd ${{ Checkout_DIR }} && rm -rf drivers/kernelsu && rm -rf .git/module/*
+          cd ${{ env.Checkout_DIR }} && rm -rf drivers/kernelsu && rm -rf .git/module/*
           
       - name: Add KernelSU as Submodule
         run: |
-          cd cd ${{ Checkout_DIR }}
+          cd cd ${{ env.Checkout_DIR }}
           git submodule add https://github.com/SoDebug/KernelSU.git KernelSU |
           git submodule init |
           git submodule update
