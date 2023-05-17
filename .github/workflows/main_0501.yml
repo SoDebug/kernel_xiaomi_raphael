@@ -59,18 +59,6 @@ jobs:
           output_dir=out
           make LLVM=1 LLVM_IAS=1 CC="ccache clang" raphael_defconfig
           make LLVM=1 LLVM_IAS=1 CC="ccache clang" -j$(grep -c ^processor /proc/cpuinfo)
-
-      - name: Creating Config Info
-        run: |
-          useVersionInfo=$(git show -s --date=short --format="提交人: %an<br/>提交时间: %cd<br/>提交内容: %s<br/>commit hash: %H")
-          echo "Device: RedMi K20 Pro 
-          Source Code Tree: SOVIET-ANDROID branch:13.0
-          Code: raphael
-          Contain KernelSU: YES(Manully_Intergrate)
-          Build Code: $(date +%Y%m%d)_${{ github.run_number }}
-          For SOVIET-ANDROID Kernel 13.0
-          SoDebug Kernel
-          " >> INFO.txt
           
       - name: Packaging the Kernel
         run: |
