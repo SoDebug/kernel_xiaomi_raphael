@@ -43,7 +43,7 @@ jobs:
 
       - name: Integrate KernelSU 
         run: 
-          curl -LSs "https://raw.githubusercontent.com/SoDebug/KernelSU/SOVIET-ANDROID/kernel/setup.sh" | bash -s v0.5.5_SOVIET-ANDROID
+          curl -LSs "https://raw.githubusercontent.com/SoDebug/KernelSU/SOVIET-ANDROID/kernel/setup.sh" | bash -s v0.5.7_SOVIET-ANDROID
 
       - name: Compiling Kernel
         run: |
