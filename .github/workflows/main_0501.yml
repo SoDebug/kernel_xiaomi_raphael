@@ -56,7 +56,7 @@ jobs:
 
         with: 
 
-          ref: "13.0"
+          ref: "13.0_0516"
 
         
 
@@ -86,7 +86,7 @@ jobs:
 
         run: 
 
-          curl -LSs "https://raw.githubusercontent.com/SoDebug/KernelSU/SOVIET-ANDROID/kernel/setup.sh" | bash -s v0.5.7
+          curl -LSs "https://raw.githubusercontent.com/SoDebug/KernelSU/SOVIET-ANDROID/kernel/setup.sh" | bash -s v0.5.7_SOVIET-ANDROID
 
           
 
