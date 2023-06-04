@@ -39,7 +39,7 @@ jobs:
 
       - name: Remove Old KernelSU Files
         run: |
-          rm -rf drivers/staging/kernelsu && rm -rf .git/module
+          rm -rf drivers/staging/kernelsu && rm -rf .git/module/*
           
       - name: Integrate KernelSU 
         run: 
