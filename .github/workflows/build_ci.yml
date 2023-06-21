@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - "13.0"
+    - "13.0_0516"
 
 env: 
   CheckOut_DIR: /home/runner/work/kernel_xiaomi_raphael/kernel_xiaomi_raphael
@@ -19,18 +19,16 @@ jobs:
           sudo apt update -y
           sudo apt-get install -y zip flex bison libncurses-dev gawk  libiberty-dev autoconf kmod bc build-essential gcc libc6 curl libstdc++6 git wget libssl-dev cpio p7zip-full ccache
           sudo apt clean
-
       - name: Cloning Sources and Toolchain
         run: |
           git clone https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r445002 --depth=1 --single-branch --no-tags -b 12.0 ~/clang
           git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/aarch64-linux-android-4.9
           git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/arm-linux-androideabi-4.9
           git clone https://github.com/onettboots/boolx_anykernel.git ${{ env.AnyKernel }}
-
       - name: CheckOut Kernel Tree
         uses: actions/checkout@v3.5.2
         with: 
-          ref: "13.0"
+          ref: "13.0_0516"
           
       - name: Checkout Commit Info
         run: |
@@ -38,14 +36,13 @@ jobs:
           echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
           echo "DATE=$(date "+%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
           echo "DATE1=$(date "+%Y-%m-%d")" >> $GITHUB_ENV
-
       - name: Remove Old KernelSU Files
         run: |
           rm -rf drivers/staging/kernelsu && rm -rf .git/module/*
           
       - name: Integrate KernelSU 
         run: 
-          curl -LSs "https://raw.githubusercontent.com/SoDebug/KernelSU/SOVIET-ANDROID_dev/kernel/setup.sh" | bash -s v0.5.x_dev_SOVIET-ANDROID
+          curl -LSs "https://raw.githubusercontent.com/SoDebug/KernelSU/SOVIET-ANDROID_dev/kernel/setup.sh" | bash -s v0.6.x_dev_SOVIET-ANDROID
 
       - name: Compiling Kernel
         run: |
@@ -68,7 +65,6 @@ jobs:
           cp -v ${{ env.CheckOut_DIR }}/out/arch/arm64/boot/dtbo.img ${{ env.AnyKernel }}/o &&
           cd ${{ env.AnyKernel }} &&
           7z a -mx9 Raphael-Kernel_KSU_Manully_SA13.zip *
-
       - name: Generate release tag
         id: tag
         run: |
